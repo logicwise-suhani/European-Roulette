@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import './App.css'
-import celebrate from '../public/confetti';
+import celebrate from "../public/confetti";
 
 function App() {
   const [value, setValue] = useState(null);
   const numbers = [];
-  const CHIP_NUMBERS = ['₹5', '₹10', '₹50', '₹100', '₹500'];
+  const CHIP_NUMBERS = ['₹500', '₹1000', '₹1500', '₹2000', '₹3000'];
   const BETS = ["1st 12", "2nd 12", "3rd 12", "Odd", "Red", "Even", "1 - 18", "Black", "19 - 36"];
-  const [selectedBet, setSelectedBet] = useState("");
-  // const [selectedBet, setSelectedBet] = useState([]);
+  const [bets, setBets] = useState([]);
+  const [selectedChip, setSelectedChip] = useState(null);
   const [message, setMessage] = useState("");
   const [resultNumber, setResultNumber] = useState("");
   const BLACK_NUM = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 29, 31, 33, 35];
@@ -24,133 +24,160 @@ function App() {
     "3rd 12": 2,
     "Single Bet": 35,
   }
-
-  // const [multipleBets, setMultipleBets] = useState([]);
+  const [amount, setAmount] = useState(0);
+  const [balance, setBalance] = useState(5000);
 
   for (let i = 1; i <= 36; i++) {
     numbers.push(i);
   }
 
   const handleClick = (e) => {
-    const targetValue = e.target.value;
-    setValue(targetValue);
-    localStorage.setItem("selectedChip", targetValue);
+    const chip = Number(e.target.value.replace("₹", ""));
+    setSelectedChip(chip);
+    setValue(`₹${chip}`);
   }
 
   const handleSingleBet = (e) => {
-    const singleBet = e.target.value;
-    localStorage.setItem("singleBet", singleBet);
-    setSelectedBet("Single Bet");
+
+    if (!selectedChip) {
+      return alert("Select chip first!");
+    }
+
+    const number = Number(e.target.value);
+
+    setBets((prev) => [
+      ...prev,
+      {
+        type: "Single Bet",
+        number,
+        chip: selectedChip,
+      }
+    ]);
   }
 
   const spinWheel = () => {
 
-    let selectChip = "";
-    try {
-      selectChip = localStorage.getItem("selectedChip")?.replace("₹", "");
-      if (!selectChip) return alert("Select a chip first!");
-    }
-    catch (error) {
-      console.error("Error getting chip!", error);
+    if (bets.length === 0) {
+      return alert("Place a bet first!");
     }
 
-    if (!selectedBet) {
-      return alert("Select a bet first!");
-    }
+    const randomNumber = Math.floor(Math.random() * numbers.length);
 
-    const randomShit = Math.floor(Math.random() * numbers.length);
-    setResultNumber(randomShit);
+    setResultNumber(randomNumber);
 
-    let result = "";
+    let updatedBalance = balance;
+    let totalWin = 0;
+    let messages = [];
 
-    switch (selectedBet) {
-      case "Odd":
-        result = randomShit % 2 !== 0 && randomShit !== 0 ? "Win" : "Lose";
-        break;
+    bets.forEach((bet) => {
 
-      case "Even":
-        result = randomShit % 2 === 0 && randomShit !== 0 ? "Win" : "Lose";
-        break;
+      let isWin = false;
 
-      case "Red":
-        result = !BLACK_NUM.includes(randomShit) ? "Win" : "Lose";
-        break;
+      switch (bet.type) {
 
-      case "Black":
-        result = BLACK_NUM.includes(randomShit) ? "Win" : "Lose";
-        break;
-
-      case "1st 12":
-        result = randomShit >= 1 && randomShit <= 12 ? "Win" : "Lose";
-        break;
-
-      case "2nd 12":
-        result = randomShit > 12 && randomShit <= 24 ? "Win" : "Lose";
-        break;
-
-      case "3rd 12":
-        result = randomShit > 24 && randomShit <= 36 ? "Win" : "Lose";
-        break;
-
-      case "1 - 18":
-        result = randomShit >= 1 && randomShit <= 18 ? "Win" : "Lose";
-        break;
-
-      case "19 - 36":
-        result = randomShit >= 19 && randomShit <= 36 ? "Win" : "Lose";
-        break;
-      case "Single Bet":
-        {
-          const singleBet = JSON.parse(localStorage.getItem("singleBet"));
-          result = randomShit === singleBet ? "Win" : "Lose";
+        case "Odd":
+          isWin = randomNumber % 2 !== 0 && randomNumber !== 0;
           break;
-        }
 
-      default:
-        break;
-    }
+        case "Even":
+          isWin = randomNumber % 2 === 0 && randomNumber !== 0;
+          break;
 
-    setMessage(result);
+        case "Red":
+          isWin = !BLACK_NUM.includes(randomNumber) && randomNumber !== 0;
+          break;
 
-    const chipValue = Number(selectChip);
+        case "Black":
+          isWin = BLACK_NUM.includes(randomNumber);
+          break;
 
-    let win = Number(localStorage.getItem("winAmount")) || 0;
+        case "1st 12":
+          isWin = randomNumber >= 1 && randomNumber <= 12;
+          break;
 
-    if (result === "Win") {
+        case "2nd 12":
+          isWin = randomNumber >= 13 && randomNumber <= 24;
+          break;
+
+        case "3rd 12":
+          isWin = randomNumber >= 25 && randomNumber <= 36;
+          break;
+
+        case "1 - 18":
+          isWin = randomNumber >= 1 && randomNumber <= 18;
+          break;
+
+        case "19 - 36":
+          isWin = randomNumber >= 19 && randomNumber <= 36;
+          break;
+
+        case "Single Bet":
+          isWin = randomNumber === bet.number;
+          break;
+
+        default:
+          break;
+      }
+
+      updatedBalance -= bet.chip;
+
+      if (isWin) {
+        const wonAmount = bet.chip * payouts[bet.type] + bet.chip;
+        updatedBalance += wonAmount;
+        totalWin += wonAmount;
+
+        messages.push(
+          ` ${bet.type} won ₹${wonAmount}`
+        );
+
+      } else {
+        totalWin -= bet.chip;
+
+        messages.push(
+          ` ${bet.type} lost ₹${bet.chip}`
+        );
+      }
+    });
+
+    setBalance(updatedBalance);
+
+    if (totalWin > 0) {
       celebrate();
-      win += chipValue * payouts[selectedBet];
-
-      localStorage.setItem("winAmount", win);
-      setMessage(`${result}: ${win}`);
-
-    } else {
-      if (win === 0) {
-        win = 0;
-        localStorage.setItem("winAmount", win);
-        setMessage(`${result}: ${win}`)
-      }
-      else {
-        win -= chipValue;
-        localStorage.setItem("winAmount", win);
-        setMessage(`${result}: ${win}`);
-      }
-
     }
+
+    setAmount((prev) => prev + totalWin);
+
+    setMessage(messages.join("\n"));
+
+    setBets([]);
+  }
+
+  const handleBets = (e) => {
+
+    if (!selectedChip) {
+      return alert("Select chip first!");
+    }
+
+    const betType = e.target.value;
+
+    setBets((prev) => [
+      ...prev,
+      {
+        type: betType,
+        chip: selectedChip,
+      }
+    ]);
   }
 
   const clearWheel = () => {
     setMessage("");
     setResultNumber("");
-    setSelectedBet("");
+    setBets([]);
+    setSelectedChip(null);
     setValue(null);
-    localStorage.clear();
+    setAmount(0);
+    setBalance(5000);
   }
-
-  // const handleBets = (e) => {
-  //   setSelectedBet(e.target.value);
-
-  //   setMultipleBets([...selectedBet]);
-  // }
 
   return (
     <>
@@ -158,7 +185,8 @@ function App() {
         <h1>European Roulette</h1>
 
         <div className='amount'>
-          <p>Total Amount: </p>
+          <p>Bankroll: ₹{balance}</p>
+          <p>Net Profit/Loss: ₹{amount}</p>
         </div>
 
         <div className='table'>
@@ -182,7 +210,16 @@ function App() {
         </div>
 
         <div className='selected'>
-          <h2>Bet Type: {selectedBet}</h2>
+          <div>
+            <h2>Selected Bets:</h2>
+            {bets.map((bet, index) => (
+              <p key={index}>
+                {bet.type} <br />
+                {bet.number !== undefined && ` [ ${bet.number} ]`} {" "}
+                ₹{bet.chip}
+              </p>
+            ))}
+          </div>
           <h2>Chip: {value}</h2>
         </div>
 
@@ -195,7 +232,7 @@ function App() {
         <br />
         <div className='bets'>
           {BETS.map((bet) => (
-            <button onClick={(e) => setSelectedBet(e.target.value)} value={bet} key={bet}>{bet}</button>
+            <button onClick={handleBets} value={bet} key={bet}>{bet}</button>
           ))}
         </div>
 
@@ -208,7 +245,7 @@ function App() {
         </div>
 
         <div className='message'>
-          {message}
+          {message} <br />
         </div>
       </div>
 
@@ -217,3 +254,4 @@ function App() {
 }
 
 export default App;
+
