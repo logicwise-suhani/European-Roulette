@@ -32,6 +32,11 @@ div {
     justify-content: center;
 }
 
+.table .yellow {
+    background-color: yellow;
+    color: black;
+}
+
 .table button {
     margin: 0;
     padding: 18px;
@@ -163,4 +168,38 @@ h2 {
     justify-content: center;
     align-items: center;
     gap: 150px;
+}
+
+.total-players button {
+    background-color: #16a34a;
+    color: white;
+}
+
+.total-players .yellow {
+    background-color: yellow;
+    color: black;
+}
+
+.total-players .green {
+    background-color: #16a34a;
+    color: black;
+}
+
+.player-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.players input {
+    height: 40px;
+    width: 50px;
+    border-radius: 10px;
+    border: none;
+    background-color: #20335e;
+    color: white;
+    border: 3px solid white;
 }

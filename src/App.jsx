@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css'
 import celebrate from "../public/confetti";
+import AddPlayers from './components/AddPlayers';
 
 function App() {
   const [value, setValue] = useState(null);
@@ -26,6 +27,7 @@ function App() {
   }
   const [amount, setAmount] = useState(0);
   const [balance, setBalance] = useState(5000);
+  const [selectedNumber, setSelectedNumber] = useState(null);
 
   for (let i = 1; i <= 36; i++) {
     numbers.push(i);
@@ -53,6 +55,8 @@ function App() {
         chip: selectedChip,
       }
     ]);
+
+    setSelectedNumber(number);
   }
 
   const spinWheel = () => {
@@ -61,7 +65,7 @@ function App() {
       return alert("Place a bet first!");
     }
 
-    const randomNumber = Math.floor(Math.random() * numbers.length);
+    const randomNumber = Math.floor(Math.random() * 37);
 
     setResultNumber(randomNumber);
 
@@ -147,9 +151,9 @@ function App() {
 
     setAmount((prev) => prev + totalWin);
 
-    setMessage(messages.join("\n"));
-
+    setMessage(messages.join(" "));
     setBets([]);
+    setValue(null);
   }
 
   const handleBets = (e) => {
@@ -184,9 +188,15 @@ function App() {
       <div>
         <h1>European Roulette</h1>
 
-        <div className='amount'>
-          <p>Bankroll: ₹{balance}</p>
-          <p>Net Profit/Loss: ₹{amount}</p>
+        <div className='amount-players'>
+          <div className='amount'>
+            <p>Bankroll: ₹{balance}</p>
+            <p>Net Profit/Loss: ₹{amount}</p>
+          </div>
+
+          <div className='players'>
+            <AddPlayers />
+          </div>
         </div>
 
         <div className='table'>
@@ -198,11 +208,13 @@ function App() {
               <button
                 key={num}
                 className={
-                  num === 0
-                    ? "green"
-                    : BLACK_NUM.includes(num)
-                      ? "black"
-                      : "red"
+                  selectedNumber === num
+                    ? "yellow"
+                    : num === 0
+                      ? "green"
+                      : BLACK_NUM.includes(num)
+                        ? "black"
+                        : "red"
                 }
                 onClick={handleSingleBet} value={num}>{num}</button>
             ))}
