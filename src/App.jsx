@@ -7,7 +7,6 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 function App() {
-  const [value, setValue] = useState(null);
   const numbers = [];
   const CHIP_NUMBERS = ["₹500", "₹1000", "₹1500", "₹2000", "₹3000"];
   const BETS = [
@@ -42,6 +41,7 @@ function App() {
   const [playerBalances, setPlayerBalances] = useState([]);
   const [casinoBalance, setCasinoBalance] = useState(100000);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [isActive, setIsActive] = useState(false);
 
   for (let i = 1; i <= 36; i++) {
     numbers.push(i);
@@ -51,7 +51,6 @@ function App() {
     if (selectedPlayer === null) return alert("Select player first!");
     const chip = Number(e.target.value.replace("₹", ""));
     setSelectedChip(chip);
-    setValue(`₹${chip}`);
   };
 
   const handleSingleBet = (e) => {
@@ -188,7 +187,6 @@ function App() {
 
     setMessage(finalMessages.join("\n\n"));
     setBets([]);
-    setValue(null);
     setSelectedNumber(null);
   };
 
@@ -197,6 +195,8 @@ function App() {
     if (!selectedChip) return alert("Select chip first!");
 
     const betType = e.target.value;
+
+    setIsActive(betType);
     setBets((prev) => [
       ...prev,
       {
@@ -205,6 +205,7 @@ function App() {
         chip: selectedChip,
       },
     ]);
+
   };
 
   const clearWheel = () => {
@@ -212,7 +213,6 @@ function App() {
     setResultNumber("");
     setBets([]);
     setSelectedChip(null);
-    setValue(null);
     setSelectedNumber(null);
   };
 
@@ -280,7 +280,7 @@ function App() {
         <div className="selected">
           <div>
             <h2>Selected Bets:</h2>
-            {Object.values(
+            {/* {Object.values(
               bets.reduce((acc, bet) => {
                 const key = `${bet.player}-${bet.type}-${bet.number ?? ""}`;
 
@@ -298,7 +298,7 @@ function App() {
                 {bet.type}
                 {bet.number !== undefined && ` [ ${bet.number} ]`} ₹{bet.chip}
               </p>
-            ))}
+            ))} */}
           </div>
         </div>
         <div className="chips">
@@ -322,7 +322,27 @@ function App() {
             >
               {bet}
               {betCounts[bet] > 0 && (
-                <span className="button-count"> {betCounts[bet]} </span>
+                <span className={isActive ? "button-count" : ""}> {Object.values(
+                  bets.reduce((acc, bet) => {
+                    const key = `${bet.player}-${bet.type}-${bet.number ?? ""}`;
+
+                    if (acc[key]) {
+                      acc[key].chip += bet.chip;
+                    } else {
+                      acc[key] = { ...bet };
+                    }
+
+                    return acc;
+                  }, {}),
+                ).map((bet, index) => (
+                  <p key={index}>
+                    Player Number: {bet.player + 1} <br />
+                    {bet.type}
+                    {bet.number !== undefined && ` [ ${bet.number} ]`} ₹{bet.chip}
+                  </p>
+                ))}
+                  {/* {betCounts[bet]}  */}
+                </span>
               )}
             </button>
           ))}
