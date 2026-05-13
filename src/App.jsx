@@ -1,18 +1,31 @@
-import { useState } from 'react';
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 import celebrate from "../public/confetti";
-import AddPlayers from './components/AddPlayers';
+import AddPlayers from "./components/AddPlayers";
+import CasinoMoney from "./components/CasinoMoney";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 function App() {
   const [value, setValue] = useState(null);
   const numbers = [];
-  const CHIP_NUMBERS = ['₹500', '₹1000', '₹1500', '₹2000', '₹3000'];
-  const BETS = ["1st 12", "2nd 12", "3rd 12", "Odd", "Red", "Even", "1 - 18", "Black", "19 - 36"];
+  const CHIP_NUMBERS = ["₹500", "₹1000", "₹1500", "₹2000", "₹3000"];
+  const BETS = [
+    "1st 12",
+    "2nd 12",
+    "3rd 12",
+    "Odd",
+    "Red",
+    "Even",
+    "1 - 18",
+    "Black",
+    "19 - 36",
+  ];
   const [bets, setBets] = useState([]);
   const [selectedChip, setSelectedChip] = useState(null);
   const [message, setMessage] = useState("");
   const [resultNumber, setResultNumber] = useState("");
-  const BLACK_NUM = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 29, 31, 33, 35];
+  const BLACK_NUM = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 29, 31, 33, 35,];
   const payouts = {
     Odd: 1,
     Even: 1,
@@ -24,61 +37,61 @@ function App() {
     "2nd 12": 2,
     "3rd 12": 2,
     "Single Bet": 35,
-  }
-  const [amount, setAmount] = useState(0);
-  const [balance, setBalance] = useState(5000);
+  };
   const [selectedNumber, setSelectedNumber] = useState(null);
+  const [playerBalances, setPlayerBalances] = useState([]);
+  const [casinoBalance, setCasinoBalance] = useState(100000);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   for (let i = 1; i <= 36; i++) {
     numbers.push(i);
   }
 
   const handleClick = (e) => {
+    if (selectedPlayer === null) return alert("Select player first!");
     const chip = Number(e.target.value.replace("₹", ""));
     setSelectedChip(chip);
     setValue(`₹${chip}`);
-  }
+  };
 
   const handleSingleBet = (e) => {
-
+    if (selectedPlayer === null) return alert("Select player first!");
     if (!selectedChip) {
       return alert("Select chip first!");
     }
 
     const number = Number(e.target.value);
-
     setBets((prev) => [
       ...prev,
       {
+        player: selectedPlayer,
         type: "Single Bet",
         number,
         chip: selectedChip,
-      }
+      },
     ]);
 
     setSelectedNumber(number);
-  }
+  };
 
   const spinWheel = () => {
-
+    if (selectedPlayer === null) return alert("Select player first!");
     if (bets.length === 0) {
       return alert("Place a bet first!");
     }
+    if (new Set(bets.map(b => b.player)).size !== playerBalances.length) return alert("All players must place bets first!");
 
     const randomNumber = Math.floor(Math.random() * 37);
-
     setResultNumber(randomNumber);
 
-    let updatedBalance = balance;
-    let totalWin = 0;
-    let messages = [];
+    let updatedBalance = [...playerBalances];
+    let updatedCasinoBalance = casinoBalance;
+    let playerResults = {};
 
     bets.forEach((bet) => {
-
       let isWin = false;
 
       switch (bet.type) {
-
         case "Odd":
           isWin = randomNumber % 2 !== 0 && randomNumber !== 0;
           break;
@@ -123,55 +136,76 @@ function App() {
           break;
       }
 
-      updatedBalance -= bet.chip;
+      const playerIndex = bet.player;
+
+      if (!playerResults[playerIndex]) {
+        playerResults[playerIndex] = {
+          total: 0,
+          details: [],
+        };
+      }
+
+      updatedBalance[playerIndex] -= bet.chip;
+      updatedCasinoBalance += bet.chip;
 
       if (isWin) {
         const wonAmount = bet.chip * payouts[bet.type] + bet.chip;
-        updatedBalance += wonAmount;
-        totalWin += wonAmount;
 
-        messages.push(
-          ` ${bet.type} won ₹${wonAmount}`
+        updatedBalance[playerIndex] += wonAmount;
+        updatedCasinoBalance -= wonAmount;
+        playerResults[playerIndex].total += wonAmount;
+
+        playerResults[playerIndex].details.push(
+          `${bet.type}${bet.number !== undefined ? ` [${bet.number}]` : ""
+          } won ₹${wonAmount}`,
         );
-
       } else {
-        totalWin -= bet.chip;
+        playerResults[playerIndex].total -= bet.chip;
 
-        messages.push(
-          ` ${bet.type} lost ₹${bet.chip}`
+        playerResults[playerIndex].details.push(
+          ` ${bet.type}${bet.number !== undefined ? ` [${bet.number}]` : ""
+          } lost ₹${bet.chip}`,
         );
       }
     });
 
-    setBalance(updatedBalance);
+    setPlayerBalances(updatedBalance);
+    setCasinoBalance(updatedCasinoBalance);
 
-    if (totalWin > 0) {
+    const someoneWon = Object.values(playerResults).some((p) => p.total > 0);
+    if (someoneWon > 0) {
       celebrate();
     }
 
-    setAmount((prev) => prev + totalWin);
+    let finalMessages = [];
 
-    setMessage(messages.join(" "));
+    Object.entries(playerResults).forEach(([player, result]) => {
+      finalMessages.push(`Player ${Number(player) + 1}
+      ${result.details.join("\n")}
+      Net: ${result.total >= 0 ? "+" : ""}
+      ₹${result.total}`);
+    });
+
+    setMessage(finalMessages.join("\n\n"));
     setBets([]);
     setValue(null);
-  }
+    setSelectedNumber(null);
+  };
 
   const handleBets = (e) => {
-
-    if (!selectedChip) {
-      return alert("Select chip first!");
-    }
+    if (selectedPlayer === null) return alert("Select player first!");
+    if (!selectedChip) return alert("Select chip first!");
 
     const betType = e.target.value;
-
     setBets((prev) => [
       ...prev,
       {
+        player: selectedPlayer,
         type: betType,
         chip: selectedChip,
-      }
+      },
     ]);
-  }
+  };
 
   const clearWheel = () => {
     setMessage("");
@@ -179,91 +213,143 @@ function App() {
     setBets([]);
     setSelectedChip(null);
     setValue(null);
-    setAmount(0);
-    setBalance(5000);
-  }
+    setSelectedNumber(null);
+  };
+
+  const betCounts = bets.reduce((acc, bet) => {
+    acc[bet.type] = (acc[bet.type] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <>
       <div>
         <h1>European Roulette</h1>
-
-        <div className='amount-players'>
-          <div className='amount'>
-            <p>Bankroll: ₹{balance}</p>
-            <p>Net Profit/Loss: ₹{amount}</p>
+        <div className="amount-players">
+          <div className="amount">
+            <CasinoMoney
+              balance={casinoBalance}
+              setBalance={setCasinoBalance}
+            />
           </div>
 
-          <div className='players'>
-            <AddPlayers />
+          <br />
+          <div className="players">
+            <AddPlayers
+              playerBalances={playerBalances}
+              setPlayerBalances={setPlayerBalances}
+              setSelectedPlayer={setSelectedPlayer}
+            />
           </div>
         </div>
-
-        <div className='table'>
-          <div className='zero'>
-            <button onClick={handleSingleBet} value={0}>0</button>
+        <div className="table">
+          <div className="zero">
+            <button onClick={handleSingleBet} value={0} className={selectedNumber === 0 ? "yellow" : "green"}
+              data-tooltip-id="chip-tooltip"
+              data-tooltip-content={
+                selectedNumber === 0
+                  ? `Profit: ₹${selectedChip * 35} | Loss: ₹${selectedChip}`
+                  : `Select chip first`
+              }
+            >
+              0
+            </button>
           </div>
-          <div className='other-btn'>
+          <div className="other-btn">
             {numbers.map((num) => (
               <button
                 key={num}
                 className={
-                  selectedNumber === num
-                    ? "yellow"
-                    : num === 0
-                      ? "green"
-                      : BLACK_NUM.includes(num)
-                        ? "black"
-                        : "red"
+                  selectedNumber === num ? "yellow" : num === 0 ? "green" : BLACK_NUM.includes(num)
+                    ? "black" : "red"
                 }
-                onClick={handleSingleBet} value={num}>{num}</button>
+                onClick={handleSingleBet}
+                value={num}
+                data-tooltip-id="chip-tooltip"
+                data-tooltip-content={
+                  selectedChip
+                    ? `Profit: ₹${selectedChip * 35} | Loss: ₹${selectedChip}`
+                    : `Select chip first`
+                }
+              >
+                {num}
+              </button>
             ))}
           </div>
         </div>
-
-        <div className='selected'>
+        <div className="selected">
           <div>
             <h2>Selected Bets:</h2>
-            {bets.map((bet, index) => (
+            {Object.values(
+              bets.reduce((acc, bet) => {
+                const key = `${bet.player}-${bet.type}-${bet.number ?? ""}`;
+
+                if (acc[key]) {
+                  acc[key].chip += bet.chip;
+                } else {
+                  acc[key] = { ...bet };
+                }
+
+                return acc;
+              }, {}),
+            ).map((bet, index) => (
               <p key={index}>
-                {bet.type} <br />
-                {bet.number !== undefined && ` [ ${bet.number} ]`} {" "}
-                ₹{bet.chip}
+                Player Number: {bet.player + 1} <br />
+                {bet.type}
+                {bet.number !== undefined && ` [ ${bet.number} ]`} ₹{bet.chip}
               </p>
             ))}
           </div>
-          <h2>Chip: {value}</h2>
         </div>
-
-        <div className='chips'>
+        <div className="chips">
           {CHIP_NUMBERS.map((chip) => (
-            <button onClick={handleClick} value={chip} key={chip}>{chip}</button>
+            <button onClick={handleClick} value={chip} key={chip}
+              className={Number(chip.replace("₹", "")) === selectedChip ? "yellow" : ""}
+            >
+              {chip}
+            </button>
           ))}
         </div>
-
         <br />
-        <div className='bets'>
+        <div className="bets">
           {BETS.map((bet) => (
-            <button onClick={handleBets} value={bet} key={bet}>{bet}</button>
+            <button
+              onClick={handleBets}
+              value={bet}
+              key={bet}
+              data-tooltip-id="chip-tooltip"
+              data-tooltip-content={`Profit: ${selectedChip * (payouts[bet] ?? 0)}, Return: ₹${selectedChip * ((payouts[bet] ?? 0) + 1)}, Loss: ${selectedChip}`}
+            >
+              {bet}
+              {betCounts[bet] > 0 && (
+                <span className="button-count"> {betCounts[bet]} </span>
+              )}
+            </button>
           ))}
         </div>
 
+        <ReactTooltip
+          id="chip-tooltip"
+          place="top"
+          style={{
+            backgroundColor: "#b4e924",
+            color: "black",
+            fontSize: "14px",
+            borderRadius: "10px",
+          }}
+        />
         <br />
-        <button onClick={spinWheel}>SPIN</button> {" "}
+        <button onClick={spinWheel}>SPIN</button>{" "}
         <button onClick={clearWheel}>CLEAR</button>
-
-        <div className='result'>
-          {resultNumber && <p>Result: {resultNumber}</p>}
+        <div className="result">
+          {resultNumber !== "" && <p>Result: {resultNumber}</p>}
         </div>
-
-        <div className='message'>
-          {message} <br />
+        <div className="message">
+          <p style={{ whiteSpace: "pre-line" }}>{message}</p>
         </div>
       </div>
-
     </>
-  )
+  );
 }
 
 export default App;
-

@@ -12,7 +12,8 @@
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-tooltip": "^6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function AddPlayers() {
+function AddPlayers({ playerBalances, setPlayerBalances, setSelectedPlayer }) {
     const [players, setPlayers] = useState("");
     const [totalPlayers, setTotalPlayers] = useState([]);
     const [isActive, setIsActive] = useState(false);
@@ -25,6 +25,11 @@ function AddPlayers() {
         );
 
         setTotalPlayers(playerList);
+
+        const randomNum = Array.from({ length: playerNum }, () =>
+            Math.floor(Math.random() * (8000 - 1000) + 1000)
+        );
+        setPlayerBalances(randomNum);
     };
 
     const handleKeyDown = (e) => {
@@ -33,40 +38,40 @@ function AddPlayers() {
     };
 
     const handlePlayer = (e) => {
-        const activeButton = Number(e.target.value);
-        setIsActive(activeButton);
+        const activePlayer = Number(e.target.value);
+        setIsActive(activePlayer);
+        setSelectedPlayer(activePlayer - 1);
     }
 
     return (
         <>
             <div className="players">
-
                 {totalPlayers.length > 0 ? "" :
                     <>
-                        <input
-                            type="number"
-                            min="1"
-                            max="10"
-                            value={players}
-                            onKeyDown={handleKeyDown}
-                            onChange={(e) => setPlayers(e.target.value)}
-                        /> {" "}
+                        <div className="input-button">
+                            <input
+                                type="number"
+                                min="1"
+                                max="10"
+                                value={players}
+                                onKeyDown={handleKeyDown}
+                                onChange={(e) => setPlayers(e.target.value)}
+                            /> {" "}
 
-                        <button onClick={addPlayers}>
-                            Add Players +
-                        </button>
+                            <button onClick={addPlayers}>Add Players +</button>
+                        </div>
                     </>
                 }
 
                 <br />
                 <div className="player-button">
-                    {totalPlayers.map((player) => (
+                    {totalPlayers.map((player, index) => (
                         <div key={player} className="total-players">
                             <button onClick={handlePlayer} className={player === isActive ? "yellow" : "green"} value={player}>Player Number: {player}</button>
+                            <p>Bankroll {player} : ₹{playerBalances[index]}</p>
                         </div>
                     ))}
                 </div>
-
             </div>
         </>
     );
