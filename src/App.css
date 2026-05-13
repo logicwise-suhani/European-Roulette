@@ -8,21 +8,6 @@ div {
     text-align: center;
 }
 
-.other-btn {
-    display: grid;
-    grid-template-columns: repeat(12, 70px);
-    gap: 10px;
-    justify-content: center;
-    padding: 20px;
-}
-
-.casino-btn {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: baseline;
-}
-
 .table {
     display: flex;
     padding: 20px;
@@ -34,14 +19,12 @@ div {
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
 }
 
-.tables {
-    display: flex;
+.other-btn {
+    display: grid;
+    grid-template-columns: repeat(12, 70px);
+    gap: 10px;
     justify-content: center;
-}
-
-.table .yellow {
-    background-color: yellow;
-    color: black;
+    padding: 20px;
 }
 
 .table button {
@@ -50,18 +33,12 @@ div {
     border-radius: 10px;
     font-size: 18px;
     font-weight: bold;
-    background: #b91c1c;
-    cursor: pointer;
-    transition: 0.2s ease;
     border: 2px solid white;
 }
 
-.zero button {
-    height: stretch;
-    background: green;
-    color: white;
-    margin: 20px 0px;
-    transition: none;
+.table .yellow {
+    background: yellow;
+    color: black;
 }
 
 .table .red {
@@ -76,6 +53,13 @@ div {
 
 .table button:hover {
     transform: scale(1.08);
+}
+
+.zero button {
+    height: stretch;
+    background: green;
+    color: white;
+    margin: 20px 0;
 }
 
 .zero button:hover {
@@ -96,10 +80,8 @@ div {
     border: 4px dashed white;
     font-size: 18px;
     font-weight: bold;
-    cursor: pointer;
     background: #f59e0b;
     color: white;
-    transition: 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -109,33 +91,47 @@ div {
     transform: rotate(10deg) scale(1.1);
 }
 
+.chips .yellow {
+    background: yellow;
+    color: black;
+    border: 4px dashed black;
+}
+
 .bets {
     display: grid;
     grid-template-columns: repeat(3, 150px);
     justify-content: center;
     gap: 12px;
-    flex-wrap: wrap;
     margin: 20px auto;
 }
 
 .bets button {
     padding: 12px 20px;
-    flex: 0 0 25%;
-    border: none;
     border-radius: 8px;
     background: #1e40af;
     color: white;
     font-size: 25px;
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
     position: relative;
-    padding: 10px 20px;
 }
 
 .bets button:hover {
     background: #2563eb;
     transform: translateY(-3px);
+}
+
+.button-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
 }
 
 button {
@@ -156,20 +152,40 @@ button:hover {
     transform: scale(1.05);
 }
 
-h2 {
-    color: #facc15;
+.player-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-.result {
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 15px;
+.total-players button {
+    background: #16a34a;
+    color: white;
 }
 
-.message {
-    margin-top: 10px;
+.total-players .yellow {
+    background: yellow;
+    color: black;
+}
+
+.players input {
+    height: 40px;
+    width: 50px;
+    border-radius: 10px;
+    border: 3px solid white;
+    background: #20335e;
+    color: white;
     font-size: 20px;
-    color: #38bdf8;
+    text-align: center;
+}
+
+.input-button {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
 }
 
 .selected {
@@ -179,66 +195,18 @@ h2 {
     gap: 150px;
 }
 
-.total-players button {
-    background-color: #16a34a;
-    color: white;
+h2 {
+    color: #facc15;
 }
 
-.total-players .yellow {
-    background-color: yellow;
-    color: black;
-}
-
-.total-players .green {
-    background-color: #16a34a;
-    color: black;
-}
-
-.player-button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.players input {
-    height: 40px;
-    width: 50px;
-    border-radius: 10px;
-    border: none;
-    background-color: #20335e;
-    color: white;
-    border: 3px solid white;
-    font-size: 20px;
-    text-align: center;
-}
-
-.input-button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: baseline;
-    gap: 10px;
-}
-
-.chips .yellow {
-    background-color: yellow;
-    color: black;
-    border: 4px dashed black;
-}
-
-.button-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: red;
-    color: white;
-    border-radius: 50%;
-    padding: 4px 8px;
-    font-size: 12px;
+.result {
+    margin-top: 15px;
+    font-size: 22px;
     font-weight: bold;
-    min-width: 20px;
-    text-align: center;
+}
+
+.message {
+    margin-top: 10px;
+    font-size: 20px;
+    color: #38bdf8;
 }
