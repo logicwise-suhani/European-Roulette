@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import celebrate from "../public/confetti";
@@ -71,10 +71,11 @@ function App() {
   const [resultLines, setResultLines] = useState([]);
   const [resultTab, setResultTab] = useState("");
 
-  const allBets = players.flatMap(player => player.bets);
+
+  const allBets = selectedPlayer !== null ? players[selectedPlayer]?.bets || [] : players.flatMap(player => player.bets);
   const selectedChip = players[selectedPlayer]?.selectedChip || null;
   const playerBalances = players.map(player => player.playerBalance);
-  const activeBets = players.map(player => player.activeBet);
+  const activeBets = players[selectedPlayer]?.activeBet || [];
 
   const validatePlayer = () => {
     if (!playerBalances.length) {
@@ -354,6 +355,8 @@ function App() {
             const isThird12 = activeBets.includes("3rd 12") && num >= 25 && num <= 36;
             const first18 = activeBets.includes("1 - 18") && num >= 1 && num <= 18;
             const second19 = activeBets.includes("19 - 36") && num >= 19 && num <= 36;
+            const isEven = activeBets.includes("Even") && num !== 0 && num % 2 === 0;
+            const isOdd = activeBets.includes("Odd") && num !== 0 && num % 2 !== 0;
 
             return (
               <button
@@ -363,7 +366,7 @@ function App() {
                 className={
                   selectedNumber === num
                     ? "yellow"
-                    : isFirst12 || isSecond12 || isThird12 || first18 || second19
+                    : isFirst12 || isSecond12 || isThird12 || first18 || second19 || isEven || isOdd
                       ? "yellow"
                       : BLACK_NUMBERS.includes(num)
                         ? "black"
