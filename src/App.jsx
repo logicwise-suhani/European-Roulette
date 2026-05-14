@@ -71,7 +71,6 @@ function App() {
   const [resultLines, setResultLines] = useState([]);
   const [resultTab, setResultTab] = useState("");
 
-
   const allBets = selectedPlayer !== null ? players[selectedPlayer]?.bets || [] : players.flatMap(player => player.bets);
   const selectedChip = players[selectedPlayer]?.selectedChip || null;
   const playerBalances = players.map(player => player.playerBalance);
@@ -98,21 +97,12 @@ function App() {
 
   const validatePlayerBalance = () => {
     const currentPlayerBalance = players[selectedPlayer]?.playerBalance || 0;
+    const currentPlayerBetTotal = getPlayerTotalBetAmount(allBets, selectedPlayer);
 
-    const currentPlayerBetTotal =
-      getPlayerTotalBetAmount(
-        allBets,
-        selectedPlayer
-      );
-
-    if (
-      currentPlayerBetTotal + selectedChip >
-      currentPlayerBalance
-    ) {
+    if (currentPlayerBetTotal + selectedChip > currentPlayerBalance) {
       alert("Insufficient balance!");
       return false;
     }
-
     return true;
   };
 
@@ -217,8 +207,7 @@ function App() {
       updatedCasinoBalance += bet.chip;
 
       if (isWin) {
-        const wonAmount =
-          bet.chip * PAYOUTS[bet.type] + bet.chip;
+        const wonAmount = bet.chip * PAYOUTS[bet.type] + bet.chip;
 
         updatedPlayers[playerIndex].playerBalance += wonAmount;
         updatedCasinoBalance -= wonAmount;
