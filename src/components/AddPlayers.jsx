@@ -1,35 +1,29 @@
 import { useState } from "react";
 
-function AddPlayers({ playerBalances, setPlayerBalances, setSelectedPlayer }) {
-    const [players, setPlayers] = useState("");
-    const [totalPlayers, setTotalPlayers] = useState([]);
-    const [isActive, setIsActive] = useState(false);
+function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) {
+    const [input, setInput] = useState("");
 
     const addPlayers = () => {
-        if (players.trim() === "") {
-            alert("Please enter a player number");
+        const count = Number(input);
+
+        if (!input.trim()) {
+            alert("Please enter number of players");
             return;
         }
 
-        if (players > 10) {
-            alert("Cannot be more than 10");
+        if (count < 1 || count > 10) {
+            alert("Players must be between 1 and 10");
             return;
         }
 
-        localStorage.setItem("players", players);
-        const playerNum = Number(localStorage.getItem("players"));
-
-        const playerList = Array.from(
-            { length: playerNum },
-            (_, index) => index + 1
-        );
-
-        setTotalPlayers(playerList);
-
-        const randomNum = Array.from({ length: playerNum }, () =>
-            Math.floor(Math.random() * (8000 - 1000) + 1000)
-        );
-        setPlayerBalances(randomNum);
+        const newPlayers = Array.from({ length: count }, () => ({
+            bets: [],
+            selectedChip: null,
+            playerBalance: Math.floor(Math.random() * (8000 - 1000) + 1000),
+            activeBet: [],
+        }));
+        setPlayers(newPlayers);
+        setSelectedPlayer(0);
     };
 
     const handleKeyDown = (e) => {
@@ -37,43 +31,43 @@ function AddPlayers({ playerBalances, setPlayerBalances, setSelectedPlayer }) {
         if (invalid.includes(e.key)) e.preventDefault();
     };
 
-    const handlePlayer = (e) => {
-        const activePlayer = Number(e.target.value);
-        setIsActive(activePlayer);
-        setSelectedPlayer(activePlayer - 1);
-    }
+    const handlePlayer = (index) => {
+        setSelectedPlayer(index);
+    };
 
     return (
-        <>
-            <div className="players">
-                {totalPlayers.length > 0 ? "" :
-                    <>
-                        <div className="input-button">
-                            <input
-                                type="number"
-                                min="1"
-                                max="10"
-                                value={players}
-                                onKeyDown={handleKeyDown}
-                                onChange={(e) => setPlayers(e.target.value)}
-                            /> {" "}
+        <div className="players">
+            {players.length === 1 && players[0].playerBalance === 0 && (
+                <div className="input-button">
+                    <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={input}
+                        onKeyDown={handleKeyDown}
+                        onChange={(e) => setInput(e.target.value)}
+                    />
+                    <button onClick={addPlayers}>Add Players +</button>
+                </div>
+            )}
 
-                            <button onClick={addPlayers}>Add Players +</button>
-                        </div>
-                    </>
-                }
-
-                <br />
+            <br />
+            {players.length > 1 &&
                 <div className="player-button">
-                    {totalPlayers.map((player, index) => (
-                        <div key={player} className="total-players">
-                            <button onClick={handlePlayer} className={player === isActive ? "yellow" : "green"} value={player}>Player Number: {player}</button>
-                            <p>Bankroll {player} : ₹{playerBalances[index]}</p>
+                    {players.map((player, index) => (
+                        <div key={index} className="total-players">
+                            <button
+                                onClick={() => handlePlayer(index)}
+                                className={selectedPlayer === index ? "yellow" : "green"}
+                            >
+                                Player Number: {index + 1}
+                            </button>
+
+                            <p>Bankroll {index + 1} : ₹{player.playerBalance}</p>
                         </div>
                     ))}
-                </div>
-            </div>
-        </>
+                </div>}
+        </div>
     );
 }
 

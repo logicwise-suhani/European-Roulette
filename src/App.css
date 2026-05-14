@@ -214,3 +214,17 @@ h2 {
     font-size: 20px;
     color: #38bdf8;
 }
+
+.spin-clear {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 20px;
+}
+
+.spin-win {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 300px;
+}
