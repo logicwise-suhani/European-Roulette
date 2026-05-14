@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 function AddPlayers({ playerBalances, setPlayerBalances, setSelectedPlayer }) {
-     const [players, setPlayers] = useState("");
+    const [players, setPlayers] = useState("");
     const [totalPlayers, setTotalPlayers] = useState([]);
     const [isActive, setIsActive] = useState(false);
 

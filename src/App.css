@@ -39,16 +39,19 @@ div {
 .table .yellow {
     background: yellow;
     color: black;
+    position: relative;
 }
 
 .table .red {
     background: red;
     color: white;
+    position: relative;
 }
 
 .table .black {
     background: black;
     color: white;
+    position: relative;
 }
 
 .table button:hover {
@@ -60,6 +63,7 @@ div {
     background: green;
     color: white;
     margin: 20px 0;
+    position: relative;
 }
 
 .zero button:hover {

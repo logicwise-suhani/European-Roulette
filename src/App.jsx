@@ -8,19 +8,8 @@ import CasinoMoney from "./components/CasinoMoney";
 
 const NUMBERS = Array.from({ length: 36 }, (_, i) => i + 1);
 const CHIP_NUMBERS = ["₹500", "₹1000", "₹1500", "₹2000", "₹3000"];
-const BET_OPTIONS = [
-  "1st 12",
-  "2nd 12",
-  "3rd 12",
-  "Odd",
-  "Red",
-  "Even",
-  "1 - 18",
-  "Black",
-  "19 - 36",
-];
+const BET_OPTIONS = ["1st 12", "2nd 12", "3rd 12", "Odd", "Red", "Even", "1 - 18", "Black", "19 - 36"];
 const BLACK_NUMBERS = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 29, 31, 33, 35];
-
 const PAYOUTS = {
   Odd: 1,
   Even: 1,
@@ -32,22 +21,6 @@ const PAYOUTS = {
   "2nd 12": 2,
   "3rd 12": 2,
   "Single Bet": 35,
-};
-
-const aggregateBets = (bets) => {
-  return Object.values(
-    bets.reduce((acc, bet) => {
-      const key = `${bet.player}-${bet.type}-${bet.number ?? ""}`;
-
-      if (acc[key]) {
-        acc[key].chip += bet.chip;
-      } else {
-        acc[key] = { ...bet };
-      }
-
-      return acc;
-    }, {})
-  );
 };
 
 const checkWin = (bet, randomNumber) => {
@@ -92,8 +65,12 @@ function App() {
   const [playerBalances, setPlayerBalances] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [casinoBalance, setCasinoBalance] = useState(100000);
+  const [activeBet, setActiveBet] = useState([]);
 
   const validatePlayer = () => {
+    if (!playerBalances.length) {
+      return alert("Add players first!");
+    }
     if (selectedPlayer === null) {
       alert("Select player first!");
       return false;
@@ -132,11 +109,13 @@ function App() {
 
   const handleChipSelect = (e) => {
     if (!validatePlayer()) return;
+    const chipValue = Number(e.target.value.replace("₹", ""));
 
-    const chipValue = Number(
-      e.target.value.replace("₹", "")
-    );
-
+    const currentPlayerBalance = playerBalances[selectedPlayer] || 0;
+    const availableBalance = currentPlayerBalance - chipValue;
+    if (chipValue > currentPlayerBalance) {
+      return alert(`Insufficient balance! You only have ₹${availableBalance} available`);
+    }
     setSelectedChip(chipValue);
   };
 
@@ -154,7 +133,6 @@ function App() {
         chip: selectedChip,
       },
     ]);
-
     setSelectedNumber(number);
   };
 
@@ -162,6 +140,7 @@ function App() {
     if (!validatePlayer() || !validateChip() ||
       !validatePlayerBalance()) return;
     const betType = e.target.value;
+    setActiveBet((prev) => prev.includes(betType) ? prev : [...prev, betType]);
 
     setBets((prev) => [
       ...prev,
@@ -175,15 +154,11 @@ function App() {
 
   const spinWheel = () => {
     if (!validatePlayer()) return;
-
     if (bets.length === 0) {
       return alert("Place a bet first!");
     }
 
-    const allPlayersBet =
-      new Set(bets.map((b) => b.player)).size ===
-      playerBalances.length;
-
+    const allPlayersBet = new Set(bets.map((b) => b.player)).size === playerBalances.length;
     if (!allPlayersBet) {
       return alert("All players must place bets first!");
     }
@@ -243,16 +218,13 @@ function App() {
     const someoneWon = Object.values(playerResults).some(
       (player) => player.total > 0
     );
-
-    if (someoneWon) {
-      celebrate();
-    }
+    if (someoneWon) celebrate();
 
     const finalMessages = Object.entries(playerResults).map(
       ([player, result]) => {
         return `Player ${Number(player) + 1}
-${result.details.join("\n")}
-Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
+          ${result.details.join("\n")}
+           Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
       }
     );
 
@@ -267,12 +239,24 @@ Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
     setBets([]);
     setSelectedChip(null);
     setSelectedNumber(null);
+    setSelectedPlayer(null);
+    setActiveBet([]);
   };
 
-  const aggregatedBets = aggregateBets(bets);
-
   const betCounts = bets.reduce((acc, bet) => {
-    acc[bet.type] = (acc[bet.type] || 0) + 1;
+    let key;
+    bet.type === "Single Bet" ? key = `Single-${bet.number}` : key = bet.type;
+    if (!acc[key]) {
+      acc[key] = {
+        count: 0,
+        total: 0,
+        players: [],
+      };
+    }
+
+    acc[key].count += 1;
+    acc[key].total += bet.chip;
+    acc[key].players.push(`P${bet.player + 1} (₹${bet.chip})`);
     return acc;
   }, {});
 
@@ -308,56 +292,55 @@ Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
                 : "green"
             }
             data-tooltip-id="chip-tooltip"
-            data-tooltip-content={
-              selectedChip
-                ? `Profit: ₹${selectedChip * 35
-                } | Loss: ₹${selectedChip}`
-                : "Select chip first"
-            }
-          > 0 </button>
+            data-tooltip-content={selectedChip ? `Profit: ₹${selectedChip * 35} | Loss: ₹${selectedChip}` : "Select chip first"}
+          > 0
+            {betCounts["Single-0"]?.count > 0 && (
+              <span className="button-count" data-tooltip-id="chip-tooltip" data-tooltip-content={betCounts["Single-0"].players.join(", ")}>
+                {betCounts["Single-0"].count}
+              </span>
+            )} </button>
         </div>
 
         <div className="other-btn">
-          {NUMBERS.map((num) => (
-            <button
-              key={num}
-              value={num}
-              onClick={handleSingleBet}
-              className={
-                selectedNumber === num
-                  ? "yellow"
-                  : BLACK_NUMBERS.includes(num)
-                    ? "black"
-                    : "red"
-              }
-              data-tooltip-id="chip-tooltip"
-              data-tooltip-content={
-                selectedChip
-                  ? `Profit: ₹${selectedChip * 35
-                  } | Loss: ₹${selectedChip}`
-                  : "Select chip first"
-              }
-            >
-              {num}
-            </button>
-          ))}
+          {NUMBERS.map((num) => {
+            const isFirst12 = activeBet.includes("1st 12") && num >= 1 && num <= 12;
+            const isSecond12 = activeBet.includes("2nd 12") && num >= 13 && num <= 24;
+            const isThird12 = activeBet.includes("3rd 12") && num >= 25 && num <= 36;
+            const first18 = activeBet.includes("1 - 18") && num >= 1 && num <= 18;
+            const second19 = activeBet.includes("19 - 36") && num >= 19 && num <= 36;
+
+            return (
+              <button
+                key={num}
+                value={num}
+                onClick={handleSingleBet}
+                className={
+                  selectedNumber === num
+                    ? "yellow"
+                    : isFirst12 || isSecond12 || isThird12 || first18 || second19
+                      ? "yellow"
+                      : BLACK_NUMBERS.includes(num)
+                        ? "black"
+                        : "red"
+                }
+                data-tooltip-id="chip-tooltip"
+                data-tooltip-content={
+                  selectedChip
+                    ? `Profit: ₹${selectedChip * 35
+                    } | Loss: ₹${selectedChip}`
+                    : "Select chip first"
+                }
+              >
+                {num}
+                {betCounts[`Single-${num}`]?.count > 0 && (
+                  <span className="button-count"
+                    data-tooltip-id="chip-tooltip"
+                    data-tooltip-content={betCounts[`Single-${num}`].players.join(", ")} >{betCounts[`Single-${num}`].count}</span>
+                )}
+              </button>
+            );
+          })}
         </div>
-      </div>
-
-      <div className="selected">
-        <h2>Selected Bets:</h2>
-
-        {aggregatedBets.map((bet, index) => (
-          <p key={index}>
-            Player Number: {bet.player + 1}
-            <br />
-
-            {bet.type}
-            {bet.number !== undefined &&
-              ` [ ${bet.number} ]`}
-            {" "}₹{bet.chip}
-          </p>
-        ))}
       </div>
 
       <div className="chips">
@@ -371,14 +354,7 @@ Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
               key={chip}
               value={chip}
               onClick={handleChipSelect}
-              className={
-                chipValue === selectedChip
-                  ? "yellow"
-                  : ""
-              }
-            >
-              {chip}
-            </button>
+              className={chipValue === selectedChip ? "yellow" : ""}>{chip} </button>
           );
         })}
       </div>
@@ -397,9 +373,10 @@ Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
           >
             {bet}
 
-            {betCounts[bet] > 0 && (
-              <span className="button-count">
-                {betCounts[bet]}
+            {betCounts[bet]?.count > 0 && (
+              <span className="button-count" data-tooltip-id="chip-tooltip"
+                data-tooltip-content={betCounts[bet].players.join(", ")}>
+                {betCounts[bet].count}
               </span>
             )}
           </button>
@@ -420,7 +397,6 @@ Net: ${result.total >= 0 ? "+" : ""}₹${result.total}`;
       <br />
       <button onClick={spinWheel}>SPIN</button>
       <button onClick={clearWheel}>CLEAR</button>
-
       <div className="result">
         {resultNumber !== "" && (
           <p>Result: {resultNumber}</p>
