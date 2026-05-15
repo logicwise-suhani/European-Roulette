@@ -239,6 +239,6 @@ h2 {
 .casino-btn {
     display: flex;
     justify-content: center;
+    align-items: baseline;
     gap: 20px;
-    align-items: center;
 }

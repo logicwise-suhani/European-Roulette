@@ -11,16 +11,8 @@ const CHIP_NUMBERS = ["₹500", "₹1000", "₹1500", "₹2000", "₹3000"];
 const BET_OPTIONS = ["1st 12", "2nd 12", "3rd 12", "Odd", "Red", "Even", "1 - 18", "Black", "19 - 36"];
 const BLACK_NUMBERS = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 20, 22, 24, 26, 29, 31, 33, 35];
 const PAYOUTS = {
-  Odd: 1,
-  Even: 1,
-  Red: 1,
-  Black: 1,
-  "1 - 18": 1,
-  "19 - 36": 1,
-  "1st 12": 2,
-  "2nd 12": 2,
-  "3rd 12": 2,
-  "Single Bet": 35,
+  Odd: 1, Even: 1, Red: 1, Black: 1, "1 - 18": 1, "19 - 36": 1,
+  "1st 12": 2, "2nd 12": 2, "3rd 12": 2, "Single Bet": 35,
 };
 
 const checkWin = (bet, randomNumber) => {
@@ -121,11 +113,9 @@ function App() {
         index === selectedPlayer
           ? {
             ...player,
-            selectedChip: player.selectedChip === chipValue ? null : chipValue,
-          }
-          : player
-      )
-    );
+            selectedChip: chipValue,
+          } : player
+      ));
   };
 
   const handleSingleBet = (e) => {
@@ -222,14 +212,12 @@ function App() {
         updatedCasinoBalance -= wonAmount;
 
         lines.push({
-          text: `Player ${playerIndex + 1} WON ₹${wonAmount} (${bet.type}${bet.number !== undefined ? ` ${bet.number}` : ""
-            })`,
+          text: `Player ${playerIndex + 1} WON ₹${wonAmount} (${bet.type}${bet.number !== undefined ? ` ${bet.number}` : ""})`,
           type: "WIN",
         });
       } else {
         lines.push({
-          text: `Player ${playerIndex + 1} LOST ₹${bet.chip} (${bet.type}${bet.number !== undefined ? ` ${bet.number}` : ""
-            })`,
+          text: `Player ${playerIndex + 1} LOST ₹${bet.chip} (${bet.type}${bet.number !== undefined ? ` ${bet.number}` : ""})`,
           type: "LOSE",
         });
       }
@@ -242,14 +230,14 @@ function App() {
     const someoneWon = lines.some((l) => l.type === "WIN");
     if (someoneWon) {
       celebrate();
-      lines.unshift({
-        text: "Some players WON!", type: "WIN",
-      });
+      lines.unshift({ text: "Players WON!", type: "WIN", });
     } else {
-      lines.unshift({
-        text: "Nobody WON!", type: "WIN",
-      });
+      lines.unshift({ text: "Nobody WON!", type: "WIN", });
     }
+
+    const someoneLose = lines.some((l) => l.type === "LOSE");
+    someoneLose ? lines.unshift({ text: "Players LOSE!", type: "LOSE", })
+      : lines.unshift({ text: "Nobody LOSE!", type: "LOSE", })
 
     setPlayers((prev) =>
       prev.map((player) => ({
@@ -330,21 +318,14 @@ function App() {
 
   return (
     <div>
-        <h1>European Roulette</h1>
+      <h1>European Roulette</h1>
       <div className="amount-players">
-        <CasinoMoney
-          balance={casinoBalance}
-          setBalance={setCasinoBalance}
-        />
+        <CasinoMoney balance={casinoBalance} setBalance={setCasinoBalance} />
       </div>
 
       <div className="players">
-        <AddPlayers
-          players={players}
-          setPlayers={setPlayers}
-          setSelectedPlayer={setSelectedPlayer}
-          selectedPlayer={selectedPlayer}
-        />
+        <AddPlayers players={players} setPlayers={setPlayers}
+          setSelectedPlayer={setSelectedPlayer} selectedPlayer={selectedPlayer} />
       </div>
 
       <div className="table">
@@ -352,11 +333,7 @@ function App() {
           <button
             onClick={handleSingleBet}
             value={0}
-            className={
-              selectedNumber === 0
-                ? "yellow"
-                : "green"
-            }
+            className={selectedNumber === 0 ? "yellow" : "green"}
             data-tooltip-id="chip-tooltip"
             data-tooltip-content={selectedChip ? `Profit: ₹${selectedChip * 35} | Loss: ₹${selectedChip}` : "Select chip first"}
           > 0
@@ -422,7 +399,7 @@ function App() {
               key={chip}
               value={chip}
               onClick={handleChipSelect}
-              className={chipValue === selectedChip ? "yellow" : ""}>{chip} </button>
+              className={chipValue === players[selectedPlayer]?.selectedChip || null ? "yellow" : ""}>{chip} </button>
           );
         })}
       </div>
@@ -451,14 +428,10 @@ function App() {
         ))}
       </div>
 
-      <ReactTooltip
-        id="chip-tooltip"
-        place="top"
+      <ReactTooltip id="chip-tooltip" place="top"
         style={{
-          backgroundColor: "#b4e924",
-          color: "black",
-          fontSize: "14px",
-          borderRadius: "10px",
+          backgroundColor: "#b4e924", color: "black",
+          fontSize: "14px", borderRadius: "10px",
         }}
       />
 
@@ -482,9 +455,7 @@ function App() {
           <p
             key={i}
             style={{ color: r.type === "WIN" ? "green" : "red" }}
-          >
-            {r.text}
-          </p>
+          > {r.text} </p>
         ))}
       </div>
     </div>
