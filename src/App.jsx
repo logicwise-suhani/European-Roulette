@@ -452,8 +452,7 @@ function App() {
 
       <div className="message">
         {filteredResults.map((r, i) => (
-          <p
-            key={i}
+          <p key={i}
             style={{ color: r.type === "WIN" ? "green" : "red" }}
           > {r.text} </p>
         ))}

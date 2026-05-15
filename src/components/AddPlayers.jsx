@@ -64,12 +64,21 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
                                 className={selectedPlayer === index ? "yellow" : "green"}
                             >
                                 Player Number: {index + 1}
+
+                                {player.bets.length > 0 && (
+                                    <div className="player-chip">
+                                        {player.bets.map((bet, i) => (
+                                            <span key={i}>₹{bet.chip} </span>
+                                        ))}
+                                    </div>
+                                )}
                             </button>
 
                             <p>Bankroll {index + 1} : ₹{player.playerBalance}</p>
                         </div>
                     ))}
-                </div>}
+                </div>
+            }
         </div>
     );
 }
