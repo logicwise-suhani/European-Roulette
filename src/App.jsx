@@ -58,7 +58,6 @@ const getPlayerTotalBetAmount = (bets, playerIndex) => {
 
 function App() {
 
-  const [selectedNumber, setSelectedNumber] = useState(null);
   const [resultNumber, setResultNumber] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [casinoBalance, setCasinoBalance] = useState(100000);
@@ -66,7 +65,8 @@ function App() {
     bets: [],
     selectedChip: null,
     playerBalance: 0,
-    activeBet: []
+    activeBet: [],
+    selectedNumber: null
   }]);
   const [resultLines, setResultLines] = useState([]);
   const [resultTab, setResultTab] = useState("");
@@ -75,6 +75,7 @@ function App() {
   const selectedChip = players[selectedPlayer]?.selectedChip || null;
   const playerBalances = players.map(player => player.playerBalance);
   const activeBets = players[selectedPlayer]?.activeBet || [];
+  const selectedNumber = players[selectedPlayer]?.selectedNumber ?? null;
 
   const validatePlayer = () => {
     if (!playerBalances.length) {
@@ -138,6 +139,7 @@ function App() {
         index === selectedPlayer
           ? {
             ...player,
+            selectedNumber: number,
             bets: [
               ...player.bets,
               {
@@ -150,7 +152,6 @@ function App() {
           } : player
       )
     );
-    setSelectedNumber(number);
   };
 
   const handleBet = (e) => {
@@ -199,7 +200,8 @@ function App() {
 
     const lines = [];
 
-    allBets.forEach((bet) => {
+    const everyPlayerBet = players.flatMap(player => player.bets);
+    everyPlayerBet.forEach((bet) => {
       const isWin = checkWin(bet, randomNumber);
       const playerIndex = bet.player;
 
@@ -260,12 +262,12 @@ function App() {
     setPlayers((prev) =>
       prev.map((player) => ({
         ...player,
+        selectedNumber: null,
         bets: [],
         selectedChip: null,
         activeBet: []
       }))
     );
-    setSelectedNumber(null);
     if (players.length > 0) {
       setSelectedPlayer(0);
     }

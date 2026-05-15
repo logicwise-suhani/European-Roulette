@@ -21,6 +21,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
             selectedChip: null,
             playerBalance: Math.floor(Math.random() * (8000 - 1000) + 1000),
             activeBet: [],
+            selectedNumber: null
         }));
         setPlayers(newPlayers);
         setSelectedPlayer(0);
@@ -32,6 +33,9 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
     };
 
     const handlePlayer = (index) => {
+        if (selectedPlayer !== null && players[selectedPlayer]?.bets.length == 0) {
+            return alert("Place atleast one bet!");
+        }
         setSelectedPlayer(index);
     };
 
