@@ -228,3 +228,17 @@ h2 {
     align-items: baseline;
     gap: 300px;
 }
+
+.amount-players {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 7px;
+}
+
+.casino-btn {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+}

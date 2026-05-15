@@ -6,7 +6,7 @@ function CasinoMoney({ balance, setBalance }) {
                 <p>Casino Balance: ₹{balance}</p>
             </div>
         </>
-    )
+    ) 
 }
  
 export default CasinoMoney;

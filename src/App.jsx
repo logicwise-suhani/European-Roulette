@@ -121,7 +121,7 @@ function App() {
         index === selectedPlayer
           ? {
             ...player,
-            selectedChip: chipValue,
+            selectedChip: player.selectedChip === chipValue ? null : chipValue,
           }
           : player
       )
@@ -167,7 +167,6 @@ function App() {
             activeBet: player.activeBet.includes(betType)
               ? player.activeBet
               : [...player.activeBet, betType],
-
             bets: [
               ...player.bets,
               {
@@ -176,9 +175,7 @@ function App() {
                 chip: selectedChip,
               },
             ],
-          } : player
-      )
-    );
+          } : player));
   };
 
   const spinWheel = () => {
@@ -190,6 +187,17 @@ function App() {
     const allPlayersBet = players.every(player => player.bets.length > 0);
     if (!allPlayersBet) {
       return alert("All players must place bets first!");
+    }
+
+    const totalPay = players.flatMap(p => p.bets).reduce((total, bet) => {
+      const multiplier = PAYOUTS[bet.type] ?? 0;
+      const payout = bet.chip * (multiplier + 1);
+      return total + payout;
+    }, 0);
+
+    if (casinoBalance < totalPay) {
+      alert("Add balance in casino");
+      return;
     }
 
     const randomNumber = Math.floor(Math.random() * 37);
@@ -209,8 +217,7 @@ function App() {
       updatedCasinoBalance += bet.chip;
 
       if (isWin) {
-        const wonAmount = bet.chip * PAYOUTS[bet.type] + bet.chip;
-
+        const wonAmount = bet.chip * PAYOUTS[bet.type] + bet.chip + bet.chip;
         updatedPlayers[playerIndex].playerBalance += wonAmount;
         updatedCasinoBalance -= wonAmount;
 
@@ -236,23 +243,20 @@ function App() {
     if (someoneWon) {
       celebrate();
       lines.unshift({
-        text: "Some players WON!",
-        type: "WIN",
+        text: "Some players WON!", type: "WIN",
       });
     } else {
       lines.unshift({
-        text: "Nobody WON!",
-        type: "WIN",
+        text: "Nobody WON!", type: "WIN",
       });
     }
 
     setPlayers((prev) =>
       prev.map((player) => ({
         ...player,
+        selectedNumber: null,
         bets: [],
-      }))
-    );
-    setSelectedNumber(null);
+      })));
   };
 
   const clearWheel = () => {
@@ -272,6 +276,33 @@ function App() {
       setSelectedPlayer(0);
     }
     setSelectedPlayer(null);
+  };
+
+  const undoBet = () => {
+    if (selectedPlayer === null) return;
+
+    setPlayers((prev) =>
+      prev.map((player, index) => {
+        if (index !== selectedPlayer) return player;
+        if (player.bets.length === 0) return player;
+
+        const updatedBets = [...player.bets];
+        updatedBets.pop();
+
+        const updatedActiveBets = updatedBets.filter((bet) => bet.type !== "Single Bet").map((bet) => bet.type);
+
+        const lastSingleBet = [...updatedBets]
+          .reverse()
+          .find((bet) => bet.type === "Single Bet");
+
+        return {
+          ...player,
+          bets: updatedBets,
+          activeBet: [...new Set(updatedActiveBets)],
+          selectedNumber: lastSingleBet ? lastSingleBet.number : null,
+        };
+      })
+    );
   };
 
   const filteredResults = resultLines.filter((line) => {
@@ -299,24 +330,21 @@ function App() {
 
   return (
     <div>
-      <h1>European Roulette</h1>
-
+        <h1>European Roulette</h1>
       <div className="amount-players">
-        <div className="amount">
-          <CasinoMoney
-            balance={casinoBalance}
-            setBalance={setCasinoBalance}
-          />
-        </div>
+        <CasinoMoney
+          balance={casinoBalance}
+          setBalance={setCasinoBalance}
+        />
+      </div>
 
-        <div className="players">
-          <AddPlayers
-            players={players}
-            setPlayers={setPlayers}
-            setSelectedPlayer={setSelectedPlayer}
-            selectedPlayer={selectedPlayer}
-          />
-        </div>
+      <div className="players">
+        <AddPlayers
+          players={players}
+          setPlayers={setPlayers}
+          setSelectedPlayer={setSelectedPlayer}
+          selectedPlayer={selectedPlayer}
+        />
       </div>
 
       <div className="table">
@@ -437,6 +465,7 @@ function App() {
       <br />
       <div className="spin-win">
         <div className="spin-clear">
+          {selectedChip && <button onClick={undoBet}>Undo</button>}
           <button onClick={spinWheel}>SPIN</button>
           <button onClick={clearWheel}>CLEAR</button>
         </div>

@@ -10,9 +10,8 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
             alert("Please enter number of players");
             return;
         }
-
-        if (count < 1 || count > 10) {
-            alert("Players must be between 1 and 10");
+        if (count === 1 || count > 10) {
+            alert("Players can be from 2 to 10");
             return;
         }
 
@@ -45,7 +44,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
                 <div className="input-button">
                     <input
                         type="number"
-                        min="1"
+                        min="0"
                         max="10"
                         value={input}
                         onKeyDown={handleKeyDown}
