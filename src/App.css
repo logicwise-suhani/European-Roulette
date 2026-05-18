@@ -160,7 +160,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 40px;
     flex-wrap: wrap;
 }
 
@@ -241,4 +241,12 @@ h2 {
     justify-content: center;
     align-items: baseline;
     gap: 20px;
+}
+
+.players-balance {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
 }

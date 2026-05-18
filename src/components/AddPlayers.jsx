@@ -2,6 +2,9 @@ import { useState } from "react";
 
 function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) {
     const [input, setInput] = useState("");
+    const getTotalBetAmount = (bets) => {
+        return bets.reduce((total, bet) => total + bet.chip, 0);
+    };
 
     const addPlayers = () => {
         const count = Number(input);
@@ -10,7 +13,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
             alert("Please enter number of players");
             return;
         }
-        if (count === 1 || count > 10) {
+        if (count <= 1 || count > 10) {
             alert("Players can be from 2 to 10");
             return;
         }
@@ -62,8 +65,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
                             <button
                                 onClick={() => handlePlayer(index)}
                                 className={selectedPlayer === index ? "yellow" : "green"}
-                            >
-                                Player Number: {index + 1}
+                            >Player Number: {index + 1}
 
                                 {player.bets.length > 0 && (
                                     <div className="player-chip">
@@ -75,6 +77,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
                             </button>
 
                             <p>Bankroll {index + 1} : ₹{player.playerBalance}</p>
+                            <p>{`Remaining balance after spin: ₹${player.playerBalance - getTotalBetAmount(player.bets)}`}</p>
                         </div>
                     ))}
                 </div>
