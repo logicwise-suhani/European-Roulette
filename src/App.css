@@ -250,3 +250,122 @@ h2 {
     gap: 40px;
     flex-wrap: wrap;
 }
+
+.player-cards {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.player-card {
+    border-radius: 28px;
+    overflow: hidden;
+    border: 3px solid #42ff64;
+    background: #07122b;
+    box-shadow: 0 0 18px rgba(66, 255, 100, 0.45);
+    transition: 0.3s ease;
+}
+
+.active-player {
+    border: 3px solid #ffe600;
+    box-shadow: 0 0 20px rgba(255, 230, 0, 0.8);
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+}
+
+.player-info {
+    display: flex;
+    gap: 15px;
+}
+
+.player-info h2 {
+    color: #42ff64;
+    margin-bottom: 6px;
+}
+
+.player-info p {
+    color: white;
+    margin: 4px 0;
+    font-size: 17px;
+}
+
+.bid-container {
+    margin: 0 4px 7px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.bid-container h3 {
+    color: white;
+    margin-bottom: 18px;
+}
+
+.bid-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.bid-left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bet-chip {
+    color: #ffe600;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.bet-text {
+    color: white;
+}
+
+.bid-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.cancel-btn {
+    border: none;
+    background: #ff2d2d;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #ff0000;
+    transform: scale(1.05);
+}
+
+.total-bid {
+    padding: 8px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.yellow-footer {
+    background: #fff000;
+    color: black;
+}
+
+.green-footer {
+    background: #42ff64;
+    color: black;
+}

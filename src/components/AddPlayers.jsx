@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) {
+function AddPlayers({
+    players,
+    setPlayers,
+    setSelectedPlayer,
+    selectedPlayer,
+    removeBet
+}) {
     const [input, setInput] = useState("");
     const getTotalBetAmount = (bets) => {
         return bets.reduce((total, bet) => total + bet.chip, 0);
@@ -23,7 +29,7 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
             selectedChip: null,
             playerBalance: Math.floor(Math.random() * (8000 - 1000) + 1000),
             activeBet: [],
-            selectedNumber: null
+            selectedNumber: null,
         }));
         setPlayers(newPlayers);
         setSelectedPlayer(0);
@@ -58,9 +64,9 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
             )}
 
             <br />
-            {players.length > 1 &&
-                <div className="player-button">
-                    {players.map((player, index) => (
+            {/* {players.length > 1 && (
+                <div className="player-button"> */}
+            {/* {players.map((player, index) => (
                         <div key={index} className="total-players">
                             <button
                                 onClick={() => handlePlayer(index)}
@@ -79,9 +85,80 @@ function AddPlayers({ players, setPlayers, setSelectedPlayer, selectedPlayer }) 
                             <p>Bankroll {index + 1} : ₹{player.playerBalance}</p>
                             <p>{`Remaining balance after spin: ₹${player.playerBalance - getTotalBetAmount(player.bets)}`}</p>
                         </div>
-                    ))}
-                </div>
-            }
+                    ))} */}
+            <div className="players">
+                {players.length > 1 && (
+                    <div className="player-cards">
+                        {players.map((player, index) => {
+                            const totalBet = getTotalBetAmount(player.bets);
+                            const remainingBalance = player.playerBalance - totalBet;
+
+                            return (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => handlePlayer(index)}
+                                    className={`player-card ${selectedPlayer === index ? "active-player" : ""}`}
+                                >
+                                    <div className="player-header">
+                                        <div className="player-info">
+                                            <div>
+                                                <h2> Player {index + 1}</h2>
+                                                <p> Bankroll: ₹{player.playerBalance}</p>
+                                                <p>Remaining after spin: ₹{remainingBalance}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bid-container">
+                                        <h3>
+                                            {selectedPlayer === index
+                                                ? "Your Bids"
+                                                : `Player ${index + 1} Bids`}
+                                            ({player.bets.length})
+                                        </h3>
+
+                                        {player.bets.map((bet) => (
+                                            <div key={bet.id} className="bid-row">
+                                                <div className="bid-left">
+                                                    <span className="bet-chip">₹{bet.chip}</span>
+
+                                                    <span className="bet-text">
+                                                        on{" "}
+                                                        {bet.type === "Single Bet"
+                                                            ? bet.number
+                                                            : bet.type}
+                                                    </span>
+                                                </div>
+
+                                                <div className="bid-right">
+                                                    <button className="cancel-btn"
+                                                        onClick={() => {
+                                                            setSelectedPlayer(index);
+                                                            removeBet(bet.id)
+                                                        }}
+                                                    >  Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div
+                                        className={`total-bid ${selectedPlayer === index
+                                            ? "yellow-footer"
+                                            : "green-footer"
+                                            }`}
+                                    >  Total Bids: ₹{totalBet}
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+            {/* </div> */}
+            {/* )} */}
         </div>
     );
 }

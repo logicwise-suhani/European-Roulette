@@ -6,7 +6,7 @@ function RouletteBoard({
     selectedNumber, activeBets, players, selectedPlayer, handleSingleBet, handleBet, newGame,
     handleChipSelect, removeBet, spinWheel, clearWheel, resultNumber, setResultTab, betCounts,
 }) {
-
+ 
     return (
         <>
             <div className="table">
@@ -162,7 +162,7 @@ function RouletteBoard({
                             if (lastBet) {
                                 removeBet(lastBet.id);
                             }
-                        }}
+                        }} 
                         data-tooltip-id="chip-tooltip"
                         data-tooltip-content={`Profit: ₹${selectedChip * (PAYOUTS[bet] ?? 0)
                             }, Return: ₹${selectedChip *

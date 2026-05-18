@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import "react-tooltip/dist/react-tooltip.css";
 import celebrate from "../../public/confetti";
 import AddPlayers from "./AddPlayers";
 import CasinoMoney from "./CasinoMoney";
 import RouletteBoard from "./RouletteBoard";
-import { useLocation, useNavigate } from "react-router";
 
 const NUMBERS = Array.from({ length: 36 }, (_, i) => i + 1);
 const CHIP_NUMBERS = ["₹500", "₹1000", "₹1500", "₹2000", "₹3000"];
@@ -368,7 +368,7 @@ function Casino() {
 
             <div className="players">
                 <AddPlayers players={players} setPlayers={setPlayers}
-                    setSelectedPlayer={setSelectedPlayer} selectedPlayer={selectedPlayer} />
+                    setSelectedPlayer={setSelectedPlayer} selectedPlayer={selectedPlayer} removeBet={removeBet} />
             </div>
 
             <RouletteBoard
