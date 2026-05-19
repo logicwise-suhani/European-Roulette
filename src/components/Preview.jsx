@@ -31,18 +31,52 @@ function Preview() {
         return acc;
     }, {});
 
+    const getTotalBetAmount = (bets) => {
+        return bets.reduce((total, bet) => total + bet.chip, 0);
+    };
+
     return (
         <>
             <div className="preview">
-                <div className="preview-balances">
-                    <h3>Player Balances</h3>
-                    <div className="players-balance">
-                        {previewData.players.map((player) => (
-                            <p key={player.player}>
-                                Player {player.player + 1} : ₹{player.balance}
-                            </p>
-                        ))}
-                    </div>
+                <div className="players">
+                    {previewData.players.length > 1 && (
+                        <div className="preview-cards">
+                            {previewData.players.map((player, index) => {
+                                const totalBet = getTotalBetAmount(player.bets);
+
+                                return (
+                                    <button key={index}>
+                                        <div className="preview-player-header">
+                                            <div className="player-info">
+                                                <div>
+                                                    <h3> Player {index + 1}</h3>
+                                                    <p> Bankroll: ₹{player.balance}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="preview-bid-container">
+                                            {player.bets.map((bet) => (
+                                                <div key={bet.id} className="bid-row">
+                                                    <div className="bid-left">
+                                                        <span className="preview-bet-chip">₹{bet.chip}</span>
+                                                        <span className="preview-bet-text">
+                                                            on{" "}
+                                                            {bet.type === "Single Bet" ? bet.number : bet.type}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <br />
+                                        <div>
+                                            Total: ₹{totalBet}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
 
                 <div className="table">
@@ -169,7 +203,6 @@ function Preview() {
                         const betPlayers = previewBets.filter(
                             (b) => b.type === bet
                         );
-
                         const isActive = previewActiveBets.includes(bet);
 
                         return (
@@ -180,12 +213,7 @@ function Preview() {
                                 data-tooltip-id="preview-tooltip"
                                 data-tooltip-content={
                                     betPlayers.length > 0
-                                        ? betPlayers
-                                            .map(
-                                                (b) =>
-                                                    `P${b.player + 1} ₹${b.chip}`
-                                            )
-                                            .join(", ")
+                                        ? betPlayers.map((b) => `P${b.player + 1} ₹${b.chip}`).join(", ")
                                         : null
                                 }
                             >

@@ -2,7 +2,7 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 function RouletteBoard({
-    NUMBERS, CHIP_NUMBERS, BET_OPTIONS, BLACK_NUMBERS, PAYOUTS, selectedChip,
+    NUMBERS, CHIP_NUMBERS, BET_OPTIONS, BLACK_NUMBERS, PAYOUTS, selectedChip, handlePreview,
     selectedNumber, activeBets, players, selectedPlayer, handleSingleBet, handleBet, newGame,
     handleChipSelect, spinWheel, clearWheel, resultNumber, setResultTab, betCounts,
 }) {
@@ -104,10 +104,7 @@ function RouletteBoard({
                             key={chip}
                             value={chip}
                             onClick={handleChipSelect}
-                            className={
-                                chipValue === players[selectedPlayer]?.selectedChip
-                                    ? "yellow" : ""
-                            }
+                            className={chipValue === players[selectedPlayer]?.selectedChip ? "yellow" : ""}
                         > {chip}
                         </button>
                     );
@@ -121,10 +118,9 @@ function RouletteBoard({
                         value={bet}
                         onClick={handleBet}
                         data-tooltip-id="chip-tooltip"
-                        data-tooltip-content={`Profit: ₹${selectedChip * (PAYOUTS[bet] ?? 0)
-                            }, Return: ₹${selectedChip *
-                            ((PAYOUTS[bet] ?? 0) + 1)
-                            }, Loss: ₹${selectedChip}`}
+                        data-tooltip-content={`Profit: ₹${selectedChip * (PAYOUTS[bet] ?? 0)}, 
+                        Return: ₹${selectedChip * ((PAYOUTS[bet] ?? 0) + 1)},
+                        Loss: ₹${selectedChip}`}
                     >
                         {bet}
 
@@ -154,15 +150,20 @@ function RouletteBoard({
 
             <div className="spin-win">
                 <div className="spin-clear">
-                    <button onClick={clearWheel}>CLEAR BOARD</button>
-                    <button onClick={spinWheel}>SPIN</button>
-                    <button onClick={newGame}>NEW GAME</button>
+                    {players.length >= 2 &&
+                        <>
+                            <button onClick={clearWheel}>CLEAR BOARD</button>
+                            <button onClick={spinWheel}>SPIN</button>
+                            <button onClick={newGame}> NEW GAME</button>
+                        </>
+                    }
                 </div>
 
                 {resultNumber !== "" && (
                     <div style={{ marginBottom: "10px" }} className="spin-clear">
                         <button onClick={() => setResultTab("WIN")}> Win </button>
-                        <button onClick={() => setResultTab("LOSE")}>  Lose </button>
+                        <button onClick={() => setResultTab("LOSE")}> Lose </button>
+                        <button onClick={handlePreview}>Preview</button>
                     </div>
                 )}
             </div>

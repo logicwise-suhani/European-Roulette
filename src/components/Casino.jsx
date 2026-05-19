@@ -361,8 +361,8 @@ function Casino() {
 
     return (
         <div>
-            <h1>European Roulette</h1>
             <div className="amount-players">
+                <h1>European Roulette</h1>
                 <CasinoMoney balance={casinoBalance} setBalance={setCasinoBalance} />
             </div>
 
@@ -374,7 +374,7 @@ function Casino() {
             <RouletteBoard
                 NUMBERS={NUMBERS} CHIP_NUMBERS={CHIP_NUMBERS} BET_OPTIONS={BET_OPTIONS} BLACK_NUMBERS={BLACK_NUMBERS} PAYOUTS={PAYOUTS}
                 selectedChip={selectedChip} selectedNumber={selectedNumber} activeBets={activeBets} players={players} selectedPlayer={selectedPlayer}
-                handleSingleBet={handleSingleBet} handleBet={handleBet} handleChipSelect={handleChipSelect} spinWheel={spinWheel}
+                handleSingleBet={handleSingleBet} handleBet={handleBet} handleChipSelect={handleChipSelect} spinWheel={spinWheel} handlePreview={handlePreview}
                 clearWheel={clearWheel} newGame={newGame} resultNumber={resultNumber} setResultTab={setResultTab} betCounts={betCounts}
             />
 
@@ -384,7 +384,6 @@ function Casino() {
                     > {r.text} </p>
                 ))}
             </div>
-            {resultNumber !== "" && <button onClick={handlePreview}>Preview</button>}
         </div>
     );
 }

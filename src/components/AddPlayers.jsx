@@ -33,6 +33,7 @@ function AddPlayers({
         }));
         setPlayers(newPlayers);
         setSelectedPlayer(0);
+        setInput("");
     };
 
     const handleKeyDown = (e) => {
@@ -53,7 +54,7 @@ function AddPlayers({
                 <div className="input-button">
                     <input
                         type="number"
-                        min="0"
+                        min="2"
                         max="10"
                         value={input}
                         onKeyDown={handleKeyDown}
@@ -111,8 +112,8 @@ function AddPlayers({
                                         ))}
                                     </div>
 
-                                    <div className={`total-bid ${selectedPlayer === index ? "yellow-footer" : "green-footer"}`}
-                                    >  Total: ₹{totalBet}
+                                    <div className={`total-bid ${selectedPlayer === index ? "yellow-footer" : "green-footer"}`}>
+                                        Total: ₹{totalBet}
                                     </div>
                                 </button>
                             );

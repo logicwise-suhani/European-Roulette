@@ -215,13 +215,14 @@ h2 {
     justify-content: flex-end;
     align-items: center;
     padding: 7px;
+    gap: 240px;
 }
 
 .casino-btn {
     display: flex;
     justify-content: center;
     align-items: baseline;
-    gap: 20px;
+    gap: 8px;
 }
 
 .players-balance {
@@ -372,6 +373,7 @@ h2 {
     font-weight: bold;
     border-radius: 12px 12px 20px 20px;
     z-index: 10;
+    margin-top: 15px;
 }
 
 .yellow-footer {
@@ -382,4 +384,67 @@ h2 {
 .green-footer {
     background: #42ff64;
     color: black;
+}
+
+.preview-cards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.preview-cards button {
+    background-color: rgba(127, 71, 182, 0.15);
+    color: white;
+    border: 2px solid #42ff64;
+    border-radius: 28px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #07122b;
+    height: 280px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.preview-cards h3,
+.preview-cards p {
+    color: white;
+}
+
+.preview-bet-chip {
+    color: red;
+}
+
+.preview-bid-container {
+    margin: 0 3px 4px;
+    border-radius: 20px;
+    background: rgba(129, 124, 124, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.preview-player-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+/* Preview card: scroll*/
+.preview-cards button::-webkit-scrollbar {
+    width: 6px;
+}
+
+.preview-cards button::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 28px;
+    margin: 18px 0;
+}
+
+.preview-cards button::-webkit-scrollbar-thumb {
+    background: #42ff64;
+    border-radius: 999px;
+    border: 2px solid #07122b;
+}
+
+.preview-cards button::-webkit-scrollbar-thumb:hover {
+    background: #6dff86;
 }
