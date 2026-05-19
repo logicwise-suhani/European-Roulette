@@ -2,32 +2,17 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 function RouletteBoard({
-    NUMBERS, CHIP_NUMBERS, BET_OPTIONS, BLACK_NUMBERS, PAYOUTS, allBets, selectedChip,
+    NUMBERS, CHIP_NUMBERS, BET_OPTIONS, BLACK_NUMBERS, PAYOUTS, selectedChip,
     selectedNumber, activeBets, players, selectedPlayer, handleSingleBet, handleBet, newGame,
-    handleChipSelect, removeBet, spinWheel, clearWheel, resultNumber, setResultTab, betCounts,
+    handleChipSelect, spinWheel, clearWheel, resultNumber, setResultTab, betCounts,
 }) {
- 
+
     return (
         <>
             <div className="table">
                 <div className="zero">
                     <button
                         onClick={handleSingleBet}
-                        onContextMenu={(e) => {
-                            e.preventDefault();
-
-                            const lastBet = [...allBets]
-                                .reverse()
-                                .find(
-                                    (bet) =>
-                                        bet.type === "Single Bet" &&
-                                        bet.number === 0
-                                );
-
-                            if (lastBet) {
-                                removeBet(lastBet.id);
-                            }
-                        }}
                         value={0}
                         className={selectedNumber === 0 ? "yellow" : "green"}
                         data-tooltip-id="chip-tooltip"
@@ -75,21 +60,6 @@ function RouletteBoard({
                                 key={num}
                                 value={num}
                                 onClick={handleSingleBet}
-                                onContextMenu={(e) => {
-                                    e.preventDefault();
-
-                                    const lastBet = [...allBets]
-                                        .reverse()
-                                        .find(
-                                            (bet) =>
-                                                bet.type === "Single Bet" &&
-                                                bet.number === num
-                                        );
-
-                                    if (lastBet) {
-                                        removeBet(lastBet.id);
-                                    }
-                                }}
                                 className={
                                     selectedNumber === num
                                         ? "yellow"
@@ -136,11 +106,9 @@ function RouletteBoard({
                             onClick={handleChipSelect}
                             className={
                                 chipValue === players[selectedPlayer]?.selectedChip
-                                    ? "yellow"
-                                    : ""
+                                    ? "yellow" : ""
                             }
-                        >
-                            {chip}
+                        > {chip}
                         </button>
                     );
                 })}
@@ -152,17 +120,6 @@ function RouletteBoard({
                         key={bet}
                         value={bet}
                         onClick={handleBet}
-                        onContextMenu={(e) => {
-                            e.preventDefault();
-
-                            const lastBet = [...allBets]
-                                .reverse()
-                                .find((b) => b.type === bet);
-
-                            if (lastBet) {
-                                removeBet(lastBet.id);
-                            }
-                        }} 
                         data-tooltip-id="chip-tooltip"
                         data-tooltip-content={`Profit: ₹${selectedChip * (PAYOUTS[bet] ?? 0)
                             }, Return: ₹${selectedChip *
@@ -194,11 +151,11 @@ function RouletteBoard({
                     borderRadius: "10px",
                 }}
             />
-            
+
             <div className="spin-win">
                 <div className="spin-clear">
-                    <button onClick={spinWheel}>SPIN</button>
                     <button onClick={clearWheel}>CLEAR BOARD</button>
+                    <button onClick={spinWheel}>SPIN</button>
                     <button onClick={newGame}>NEW GAME</button>
                 </div>
 

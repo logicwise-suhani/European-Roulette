@@ -62,7 +62,7 @@ function AddPlayers({
                     <button onClick={addPlayers}>Add Players +</button>
                 </div>
             )}
- 
+
             <div className="players">
                 {players.length > 1 && (
                     <div className="player-cards">
@@ -73,7 +73,6 @@ function AddPlayers({
                             return (
                                 <button
                                     key={index}
-                                    type="button"
                                     onClick={() => handlePlayer(index)}
                                     className={`player-card ${selectedPlayer === index ? "active-player" : ""}`}
                                 >
@@ -92,7 +91,6 @@ function AddPlayers({
                                             <div key={bet.id} className="bid-row">
                                                 <div className="bid-left">
                                                     <span className="bet-chip">₹{bet.chip}</span>
-
                                                     <span className="bet-text">
                                                         on{" "}
                                                         {bet.type === "Single Bet" ? bet.number : bet.type}
@@ -113,9 +111,8 @@ function AddPlayers({
                                         ))}
                                     </div>
 
-                                    <div
-                                        className={`total-bid ${selectedPlayer === index ? "yellow-footer" : "green-footer"}`}
-                                    >  Total Bids: ₹{totalBet}
+                                    <div className={`total-bid ${selectedPlayer === index ? "yellow-footer" : "green-footer"}`}
+                                    >  Total: ₹{totalBet}
                                     </div>
                                 </button>
                             );

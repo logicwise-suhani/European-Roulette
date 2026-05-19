@@ -372,10 +372,9 @@ function Casino() {
             </div>
 
             <RouletteBoard
-                NUMBERS={NUMBERS} CHIP_NUMBERS={CHIP_NUMBERS} BET_OPTIONS={BET_OPTIONS} BLACK_NUMBERS={BLACK_NUMBERS}
-                PAYOUTS={PAYOUTS} allBets={allBets} selectedChip={selectedChip} selectedNumber={selectedNumber} han
-                activeBets={activeBets} players={players} selectedPlayer={selectedPlayer} handleSingleBet={handleSingleBet}
-                handleBet={handleBet} handleChipSelect={handleChipSelect} removeBet={removeBet} spinWheel={spinWheel}
+                NUMBERS={NUMBERS} CHIP_NUMBERS={CHIP_NUMBERS} BET_OPTIONS={BET_OPTIONS} BLACK_NUMBERS={BLACK_NUMBERS} PAYOUTS={PAYOUTS}
+                selectedChip={selectedChip} selectedNumber={selectedNumber} activeBets={activeBets} players={players} selectedPlayer={selectedPlayer}
+                handleSingleBet={handleSingleBet} handleBet={handleBet} handleChipSelect={handleChipSelect} spinWheel={spinWheel}
                 clearWheel={clearWheel} newGame={newGame} resultNumber={resultNumber} setResultTab={setResultTab} betCounts={betCounts}
             />
 
