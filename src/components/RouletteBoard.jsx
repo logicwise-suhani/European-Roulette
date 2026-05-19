@@ -194,8 +194,7 @@ function RouletteBoard({
                     borderRadius: "10px",
                 }}
             />
-
-            <br />
+            
             <div className="spin-win">
                 <div className="spin-clear">
                     <button onClick={spinWheel}>SPIN</button>

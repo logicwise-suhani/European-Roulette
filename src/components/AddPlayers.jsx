@@ -62,30 +62,7 @@ function AddPlayers({
                     <button onClick={addPlayers}>Add Players +</button>
                 </div>
             )}
-
-            <br />
-            {/* {players.length > 1 && (
-                <div className="player-button"> */}
-            {/* {players.map((player, index) => (
-                        <div key={index} className="total-players">
-                            <button
-                                onClick={() => handlePlayer(index)}
-                                className={selectedPlayer === index ? "yellow" : "green"}
-                            >Player Number: {index + 1}
-
-                                {player.bets.length > 0 && (
-                                    <div className="player-chip">
-                                        {player.bets.map((bet, i) => (
-                                            <span key={i}>₹{bet.chip} </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </button>
-
-                            <p>Bankroll {index + 1} : ₹{player.playerBalance}</p>
-                            <p>{`Remaining balance after spin: ₹${player.playerBalance - getTotalBetAmount(player.bets)}`}</p>
-                        </div>
-                    ))} */}
+ 
             <div className="players">
                 {players.length > 1 && (
                     <div className="player-cards">
@@ -103,7 +80,7 @@ function AddPlayers({
                                     <div className="player-header">
                                         <div className="player-info">
                                             <div>
-                                                <h2> Player {index + 1}</h2>
+                                                <h3> Player {index + 1}</h3>
                                                 <p> Bankroll: ₹{player.playerBalance}</p>
                                                 <p>Remaining after spin: ₹{remainingBalance}</p>
                                             </div>
@@ -111,13 +88,6 @@ function AddPlayers({
                                     </div>
 
                                     <div className="bid-container">
-                                        <h3>
-                                            {selectedPlayer === index
-                                                ? "Your Bids"
-                                                : `Player ${index + 1} Bids`}
-                                            ({player.bets.length})
-                                        </h3>
-
                                         {player.bets.map((bet) => (
                                             <div key={bet.id} className="bid-row">
                                                 <div className="bid-left">
@@ -125,15 +95,14 @@ function AddPlayers({
 
                                                     <span className="bet-text">
                                                         on{" "}
-                                                        {bet.type === "Single Bet"
-                                                            ? bet.number
-                                                            : bet.type}
+                                                        {bet.type === "Single Bet" ? bet.number : bet.type}
                                                     </span>
                                                 </div>
 
                                                 <div className="bid-right">
                                                     <button className="cancel-btn"
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
                                                             setSelectedPlayer(index);
                                                             removeBet(bet.id)
                                                         }}
@@ -145,10 +114,7 @@ function AddPlayers({
                                     </div>
 
                                     <div
-                                        className={`total-bid ${selectedPlayer === index
-                                            ? "yellow-footer"
-                                            : "green-footer"
-                                            }`}
+                                        className={`total-bid ${selectedPlayer === index ? "yellow-footer" : "green-footer"}`}
                                     >  Total Bids: ₹{totalBet}
                                     </div>
                                 </button>
@@ -157,8 +123,6 @@ function AddPlayers({
                     </div>
                 )}
             </div>
-            {/* </div> */}
-            {/* )} */}
         </div>
     );
 }

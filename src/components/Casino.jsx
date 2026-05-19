@@ -52,7 +52,7 @@ function Casino() {
 
     const [resultNumber, setResultNumber] = useState("");
     const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const [casinoBalance, setCasinoBalance] = useState(100000);
+    const [casinoBalance, setCasinoBalance] = useState(1000000);
     const [players, setPlayers] = useState([{
         bets: [],
         selectedChip: null,
@@ -316,7 +316,7 @@ function Casino() {
         setResultTab("");
         setResultNumber("");
         setPreviewData(null);
-        setCasinoBalance(100000);
+        setCasinoBalance(1000000);
         setPlayers([{
             bets: [],
             selectedChip: null,

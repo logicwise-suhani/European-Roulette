@@ -152,26 +152,7 @@ button {
 }
 
 button:hover {
-    background: #22c55e;
     transform: scale(1.05);
-}
-
-.player-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.total-players button {
-    background: #16a34a;
-    color: white;
-}
-
-.total-players .yellow {
-    background: yellow;
-    color: black;
 }
 
 .players input {
@@ -253,30 +234,55 @@ h2 {
 
 .player-cards {
     display: flex;
-    gap: 30px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
+.player-cards button {
+    padding: 6px 6px;
+}
+
 .player-card {
     border-radius: 28px;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 3px solid #42ff64;
     background: #07122b;
-    box-shadow: 0 0 18px rgba(66, 255, 100, 0.45);
-    transition: 0.3s ease;
+    height: 280px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.player-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.player-card::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 28px;
+    margin: 18px 0;
+}
+
+.player-card::-webkit-scrollbar-thumb {
+    background: #42ff64;
+    border-radius: 999px;
+    border: 2px solid #07122b;
+}
+
+.player-card::-webkit-scrollbar-thumb:hover {
+    background: #6dff86;
 }
 
 .active-player {
     border: 3px solid #ffe600;
-    box-shadow: 0 0 20px rgba(255, 230, 0, 0.8);
 }
 
 .player-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 10px;
+    padding: 8px;
 }
 
 .player-info {
@@ -284,9 +290,10 @@ h2 {
     gap: 15px;
 }
 
-.player-info h2 {
+.player-info h3 {
     color: #42ff64;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
+    margin-top: 0px;
 }
 
 .player-info p {
@@ -296,7 +303,7 @@ h2 {
 }
 
 .bid-container {
-    margin: 0 4px 7px;
+    margin: 0 3px 4px;
     border-radius: 20px;
     background: rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -311,19 +318,21 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    padding: 2px;
 }
 
 .bid-left {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+    padding: 8px;
+    flex-wrap: wrap;
 }
 
 .bet-chip {
     color: #ffe600;
     font-weight: bold;
-    font-size: 22px;
+    font-size: 18px;
 }
 
 .bet-text {
@@ -335,15 +344,16 @@ h2 {
     align-items: center;
     gap: 15px;
     color: white;
+    padding: 3px;
 }
 
 .cancel-btn {
     border: none;
     background: #ff2d2d;
     color: white;
-    padding: 4px 8px;
     border-radius: 10px;
     font-weight: bold;
+    font-size: 14px;
     cursor: pointer;
     transition: 0.2s;
 }
@@ -354,10 +364,14 @@ h2 {
 }
 
 .total-bid {
+    position: sticky;
+    bottom: 0;
     padding: 8px;
     text-align: center;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: bold;
+    border-radius: 12px 12px 20px 20px;
+    z-index: 10;
 }
 
 .yellow-footer {
